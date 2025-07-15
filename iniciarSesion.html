@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="iniciarSesion" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+</head>
+<body>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0e0e10, #1a1a1f);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  color: #fff;
+}
+
+.wrapper {
+  width: 420px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  padding: 40px 30px;
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+  animation: fadeUp 0.8s ease forwards;
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+.wrapper::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  left: -40px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(0, 198, 255, 0.15), transparent 70%);
+  z-index: -1;
+}
+
+.wrapper h1 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #ffffff;
+}
+
+.input-box {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: #121212;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.input-box input::placeholder {
+  color: #888;
+}
+
+.input-box input:focus {
+  border-color: #00c6ff;
+}
+
+.input-box i {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 18px;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(0, 198, 255, 0.3);
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 14px;
+  color: #bbb;
+}
+
+.register-link p a {
+  color: #00c6ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-link p a:hover {
+  text-decoration: underline;
+}
+
+/* Animación suave de entrada */
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+  </style>
+  <div class="wrapper">
+    <form id="iniciarsesionform">
+      <h1>Iniciar Sesión</h1>
+      <div class="input-box">
+        <input type="text" id="codigo" placeholder="Código de Estudiante" required />
+        <i class='bx bxs-user'></i>
+      </div>
+      <div class="input-box">
+        <input type="password" id="contraseña" placeholder="Contraseña" required />
+        <i class='bx bxs-lock-alt'></i>
+      </div>
+      <button id="login-button" type="button" class="btn">Iniciar Sesión</button>
+      <div class="register-link">
+      </div>
+    </form>
+  </div>
+
+  <!-- Cargar la librería Supabase primero -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const supabaseUrl = 'https://aamvnpvfzmnrrfurovuv.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbXZucHZmem1ucnJmdXJvdnV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwNjI2NDUsImV4cCI6MjA2MzYzODY0NX0._OigReH-zPR9AfGE5L9Rw9H71AnxQzH7T5k93mjPj5E';
+
+      window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+      const script = document.createElement('script');
+      script.src = 'iniciarSesion.js';
+      script.onload = () => console.log("✅ iniciarSesion.js cargado correctamente");
+      script.onerror = () => console.error("❌ Error al cargar iniciarSesion.js");
+      document.body.appendChild(script);
+    });
+
+    console.log("iniciarSesion.js cargado");
+
+const loginButton = document.querySelector("#login-button");
+
+if (!loginButton) {
+  console.error("No se encontró el botón de login.");
+} else {
+  console.log("Botón de login encontrado");
+
+  loginButton.addEventListener("click", async (e) => {
+    e.preventDefault();
+    
+    if (typeof supabase === "undefined") {
+      console.error("❌ Supabase no está definido");
+      return;
+    }
+
+    const codigo = document.querySelector("#codigo").value.trim();
+    const password = document.querySelector("#contraseña").value;
+
+    if (!codigo || !password) {
+      alert("Por favor ingresa código y contraseña.");
+      return;
+    }
+
+    console.log("Intentando iniciar sesión con:", { codigo, password });
+
+    try {
+      const { data, error } = await supabase
+        .from("estudiantes")
+        .select("*")
+        .eq("codigo_estudiante", codigo)
+        .eq("contrasena", password)
+        .single();
+
+      console.log("Resultado:", { data, error });
+
+      if (error || !data) {
+        alert("Código o contraseña incorrectos.");
+        return;
+      }
+
+      alert(`Bienvenido ${data.nombre}`);
+
+      // ✅ Guardamos el usuario por su código
+      localStorage.setItem("currentUser", JSON.stringify(data));
+      localStorage.setItem("userName", data.nombre);
+
+      window.location.href = "estudiante.html";
+    } catch (err) {
+      console.error("Error inesperado al iniciar sesión:", err);
+      alert("Ocurrió un error al iniciar sesión.");
+    }
+  });
+}
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Información del Estudiante</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 200px;
+      background-color: #0b3d91;
+      color: white;
+      padding: 10px 20px;
+      z-index: 1000;
+    }
+
+    .side-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100%;
+      background-color: #0b3d91;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      color: white;
+    }
+
+    .side-bar h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .side-bar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .side-bar li {
+      margin-bottom: 10px;
+    }
+
+    .side-bar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    main {
+      margin-left: 425px;
+      margin-top: 140px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #0b3d91;
+      color: white;
+    }
+
+    #cerrar-sesion {
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #ff5252;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="side-bar">
+    <h2>Menú</h2>
+    <ul>
+      <li><a href="estudiante.html">Ver Notas</a></li>
+    </ul>
+    <button id="cerrar-sesion">Cerrar Sesión</button>
+  </div>
+
+  <header>
+    <h1>Información del Estudiante</h1>
+  </header>
+
+  <main>
+    <h2 id="nombre-usuario">Estudiante</h2>
+
+    <table>
+      <tbody>
+        <tr>
+          <th>Nombre</th>
+          <td id="dato-nombre">Cargando...</td>
+        </tr>
+        <tr>
+          <th>Correo</th>
+          <td id="dato-correo">Cargando...</td>
+        </tr>
+        <tr>
+          <th>Curso</th>
+          <td id="dato-curso">Cargando...</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const supabase = window.supabase.createClient(
+        "https://aamvnpvfzmnrrfurovuv.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhbXZucHZmem1ucnJmdXJvdnV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwNjI2NDUsImV4cCI6MjA2MzYzODY0NX0._OigReH-zPR9AfGE5L9Rw9H71AnxQzH7T5k93mjPj5E"
+      );
+
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (!currentUser) {
+        alert("No has iniciado sesión.");
+        window.location.href = "iniciarSesion.html";
+        return;
+      }
+
+      document.getElementById("nombre-usuario").textContent = currentUser.nombre || "Estudiante";
+
+      try {
+        const { data: estudiante } = await supabase
+          .from("estudiantes")
+          .select("nombre, correo, curso_id:cursos(nombre_curso)")
+          .eq("codigo_estudiante", currentUser.codigo_estudiante)
+          .single();
+
+        if (!estudiante) throw new Error("Estudiante no encontrado");
+
+        document.getElementById("dato-nombre").textContent = estudiante.nombre || "-";
+        document.getElementById("dato-correo").textContent = estudiante.correo || "-";
+        document.getElementById("dato-curso").textContent = estudiante.curso_id?.nombre_curso || "-";
+
+      } catch (error) {
+        console.error("Error al cargar información:", error);
+        alert("No se pudo cargar la información del estudiante.");
+      }
+    });
+
+    document.getElementById("cerrar-sesion").addEventListener("click", () => {
+      localStorage.removeItem("currentUser");
+      window.location.href = "iniciarSesion.html";
+    });
+  </script>
+</body>
+</html>
